@@ -18,12 +18,24 @@ class OfferController extends Controller
      */
     public function index(Request $request, OfferService $offerService)
     {
-        $this->authorize('viewAny', Offer::class);
-        
+       $this->authorize('viewAny', Offer::class);
+
         $categories = Category::orderBy('title')->get();
         $locations = Location::orderBy('title')->get();
 
         $offers = $offerService->get($request->query());
+
+        return view('offers.index', compact('offers','categories', 'locations'));
+    }
+
+    public function myOffers(Request $request, OfferService $offerService)
+    {
+        $this->authorize('viewMy', Offer::class);
+        
+        $categories = Category::orderBy('title')->get();
+        $locations = Location::orderBy('title')->get();
+
+        $offers = $offerService->getMine($request->query());
 
         return view('offers.index', compact('offers','categories', 'locations'));
     }
@@ -95,8 +107,11 @@ class OfferController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Offer $offer, OfferService $offerService)
     {
-        //
+        
+        $offerService->destroy($offer);
+
+        return response('Offer deleted');
     }
 }

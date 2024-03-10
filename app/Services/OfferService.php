@@ -37,6 +37,19 @@ class OfferService{
         return $offers;
     }
 
+    public function getMine(array $queryParams = [])
+    {
+        $queryBuilder = Offer::with(['author', 'categories', 'locations'])
+                            ->where('author_id', auth()->user()->id)
+                            ->latest();
+        
+        $offers = resolve(OfferFilter::class)->getResults([
+            'builder' => $queryBuilder,
+            'params' => $queryParams
+        ]);
+        return $offers;
+    }
+
 
     public function update(Offer $offer, array $data, $image = null)
     {
@@ -56,5 +69,13 @@ class OfferService{
             }
         }, 5);
         
+    }
+
+    public function destroy(Offer $offer)
+    {
+        $offer->update([
+            'deleted_by' => auth()->user()->id,
+            'deleted_at' => now()
+        ]);
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->float('price');
             $table->string('status')->default(\App\Constants\Status::DRAFT);
             $table->foreignId('author_id')->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });
