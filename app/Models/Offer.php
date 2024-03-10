@@ -25,11 +25,23 @@ class Offer extends Model implements HasMedia
         'author_id'
     ];
 
+    public function author()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function categories(){
         return $this->belongsToMany(Category::class);
     }
 
     public function locations(){
         return $this->belongsToMany(Location::class);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->hasMedia() 
+            ? $this->getFirsgetUrltMediaUrl() 
+            : self::PLACEHOLDER_IMAGE_PATH;
     }
 }
